@@ -1,4 +1,4 @@
-import {LitElement, css, html, nothing} from 'lit'
+import {LitElement, css, html, nothing, PropertyValues} from 'lit'
 import {customElement, query, state} from 'lit/decorators.js'
 import Controller from "./controller.ts";
 
@@ -17,7 +17,7 @@ export default class App extends LitElement {
             <header>
                 <h1>vagonWEB +</h1>
                 <div class="search">
-                    <input id="search" type="text" @change="${this.search}" @keyup="${this.search}"
+                    <input id="search" type="search" @change="${this.search}" @keyup="${this.search}"
                            placeholder="Zug suchen (Nr. o. Name)" autocomplete="off" spellcheck="false"
                            autocapitalize="off">
                     <button @click="${this.reset}">Löschen</button>
