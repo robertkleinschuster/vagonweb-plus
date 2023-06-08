@@ -19,7 +19,7 @@ export default class App extends LitElement {
                 <div class="search">
                     <input id="search" type="search" @change="${this.search}" @keyup="${this.search}"
                            placeholder="Zug suchen (Nr. o. Name)" autocomplete="off" spellcheck="false"
-                           autocapitalize="off">
+                           autocapitalize="off" autocorrect="off" autofocus>
                     <button @click="${this.reset}">Löschen</button>
                 </div>
             </header>
