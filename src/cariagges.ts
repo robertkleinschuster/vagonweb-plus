@@ -6,7 +6,6 @@ class Cariagges extends LitElement {
     @property()
     public path: string;
 
-    @state()
     private images = []
 
     public async loadImages(path: string) {
@@ -15,7 +14,8 @@ class Cariagges extends LitElement {
         const htmlString = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlString, 'text/html');
-        const imageNodes = doc.querySelectorAll('#planovane_razeni .vagonek img') as NodeListOf<HTMLImageElement>;
+        const firstPlanned = doc.querySelector('#planovane_razeni .vlacek')
+        const imageNodes = firstPlanned.querySelectorAll('.vagonek img') as NodeListOf<HTMLImageElement>;
         const images: string[] = [];
         for (const imgNode of imageNodes) {
             images.push('https://www.vagonweb.cz/' + imgNode.getAttribute('src'));
