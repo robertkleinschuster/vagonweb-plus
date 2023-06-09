@@ -14,7 +14,7 @@ export default class App extends LitElement {
 
     render() {
         return html`
-            <header>
+            <header @touchmove="${e => e.preventDefault()}">
                 <h1>vagonWEB +</h1>
                 <div class="search">
                     <input id="search" type="search" @change="${this.search}" @keyup="${this.search}"
@@ -23,16 +23,18 @@ export default class App extends LitElement {
                     <button @click="${this.reset}">Löschen</button>
                 </div>
             </header>
-            <ul>
-                ${this.results.map(item =>
-                        html`
+            <main>
+                <ul>
+                    ${this.results.map(item =>
+                            html`
                             <li>
                                 <a href="${item.vagonweb}">${item.type}
                                     ${item.nr}${item.name ? html` (${item.name})` : nothing}</a>
                                 <p>${item.route}</p>
                             </li>`
-                )}
-            </ul>
+                    )}
+                </ul>
+            </main>
         `
     }
 
@@ -56,17 +58,26 @@ export default class App extends LitElement {
     static styles = css`
       :host {
         width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
 
       header {
         background: #3b3b3b;
-        position: sticky;
         top: 0;
         display: flex;
         flex-direction: column;
         padding: 1rem 2rem;
+        overscroll-behavior: none;
       }
 
+      main {
+        overflow: auto;
+        overscroll-behavior: none;
+      }
+      
       h1 {
         margin: 0 0 1rem 0;
       }
