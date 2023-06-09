@@ -1,6 +1,7 @@
 import {LitElement, css, html, nothing, PropertyValues} from 'lit'
 import {customElement, query, state} from 'lit/decorators.js'
 import Controller from "./controller.ts";
+import "./cariagges.ts"
 
 @customElement('v-app')
 export default class App extends LitElement {
@@ -27,11 +28,12 @@ export default class App extends LitElement {
                 <ul>
                     ${this.results.map(item =>
                             html`
-                            <li>
-                                <a href="${item.vagonweb}">${item.type}
-                                    ${item.nr}${item.name ? html` (${item.name})` : nothing}</a>
-                                <p>${item.route}</p>
-                            </li>`
+                                <li>
+                                    <a href="${item.vagonweb}">${item.type}
+                                        ${item.nr}${item.name ? html` (${item.name})` : nothing}</a>
+                                    <v-carriages path="${item.html}"></v-carriages>
+                                    <p>${item.route}</p>
+                                </li>`
                     )}
                 </ul>
             </main>
@@ -77,7 +79,7 @@ export default class App extends LitElement {
         overflow: auto;
         overscroll-behavior: none;
       }
-      
+
       h1 {
         margin: 0 0 1rem 0;
       }
