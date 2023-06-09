@@ -23,9 +23,9 @@ class Cariagges extends LitElement {
         return images;
     }
 
-    protected async firstUpdated(_changedProperties: PropertyValues) {
-        super.firstUpdated(_changedProperties);
+    protected async scheduleUpdate():  Promise<void> {
         this.images = await this.loadImages(this.path)
+        super.scheduleUpdate();
     }
 
     protected render() {
