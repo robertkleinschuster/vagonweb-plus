@@ -1,7 +1,9 @@
 import {LitElement, css, html, nothing, PropertyValues} from 'lit'
 import {customElement, query, state} from 'lit/decorators.js'
+import {repeat} from 'lit/directives/repeat.js'
+import {unsafeHTML} from 'lit/directives/unsafe-html.js'
 import Controller from "./controller.ts";
-import "./cariagges.ts"
+import "./details.ts"
 
 @customElement('v-app')
 export default class App extends LitElement {
@@ -26,14 +28,11 @@ export default class App extends LitElement {
             </header>
             <main>
                 <ul>
-                    ${this.results.map(item =>
-                            html`
-                                <li>
-                                    <a href="${item.vagonweb}">${item.type}
-                                        ${item.nr}${item.name ? html` (${item.name})` : nothing}</a>
-                                    <v-carriages path="${item.html}"></v-carriages>
-                                    <p>${item.route}</p>
-                                </li>`
+                    ${repeat(this.results, item => item.operator + item.nr, item => html`
+                        <li>
+                            <a href="${item.vagonweb}">${unsafeHTML(item.title)}</a>
+                            <v-details path="${item.html}">${item.route}</v-details>
+                        </li>`
                     )}
                 </ul>
             </main>
@@ -87,6 +86,24 @@ export default class App extends LitElement {
       input {
         padding: .5rem;
         font-size: 16px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+      }
+
+      li {
+        padding: .5rem;
+        border-bottom: 1px solid grey;
+      }
+
+      li:last-of-type {
+        border: none;
       }
 
       a {

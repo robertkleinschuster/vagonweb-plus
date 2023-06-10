@@ -16,6 +16,7 @@ echo json_encode(
     array_map(fn($item) => [
         'type' => $item['druh'],
         'nr' => $item['cislo'],
+        'title' => $item['value'],
         'name' => $item['nazev'],
         'route' => $item['trasa'],
         'operator' => $item['zeme'],
