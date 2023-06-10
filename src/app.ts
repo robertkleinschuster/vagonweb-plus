@@ -99,7 +99,7 @@ export default class App extends LitElement {
 
       li {
         padding: .5rem;
-        border-bottom: 1px solid grey;
+        border-bottom: var(--light-border);
       }
 
       li:last-of-type {
