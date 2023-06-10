@@ -14,6 +14,9 @@ class Details extends LitElement {
     private info: string = ''
 
     @state()
+    private badges: string[] = [];
+
+    @state()
     private carriages: TemplateResult[] = []
 
     public async fetchData(path: string) {
@@ -31,6 +34,14 @@ class Details extends LitElement {
         if (!this.info) {
             this.info = '<span class="info2j">i</span> täglich';
         }
+
+        this.badges = []
+        doc.querySelectorAll('.pikto').forEach((img: HTMLImageElement) => {
+            if (!this.badges.includes(img.getAttribute('src'))) {
+                this.badges.push(img.getAttribute('src'))
+            }
+        });
+        this.badges.sort()
 
         const firstPlanned = doc.querySelector('#planovane_razeni .vlacek')
         this.carriages = []
@@ -58,7 +69,9 @@ class Details extends LitElement {
 
     protected render() {
         return html`
-            <p class="route">${this.route ? this.route : html`<slot></slot>`}</p>
+            <p class="route">${this.route ? this.route : html`
+                <slot></slot>`}</p>
+            <p class="badges">${this.badges.map(src=> html`<img src="${src}" alt="">`)}</p>
             <p class="info">${unsafeHTML(this.info)}</p>
             <p class="carriages">${this.carriages}</p>
         `
@@ -67,7 +80,7 @@ class Details extends LitElement {
     static styles = css`
       :host {
         display: block;
-        height: 8rem;
+        height: 9rem;
       }
 
       .info1j, .info2j {
@@ -85,6 +98,14 @@ class Details extends LitElement {
         margin: .5rem 0;
         overflow: auto;
         white-space: nowrap;
+      }
+      
+      .badges {
+        display: flex;
+        margin: .25rem 0;
+        gap: .125rem;
+        height: 1rem;
+        overflow: auto;
       }
 
       .info:not(:empty) {
