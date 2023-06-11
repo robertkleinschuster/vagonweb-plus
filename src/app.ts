@@ -30,8 +30,10 @@ export default class App extends LitElement {
                 <ul>
                     ${repeat(this.results, item => item.operator + item.nr, item => html`
                         <li>
-                            <a href="${item.vagonweb}">${unsafeHTML(item.title)}</a>
-                            <p class="operator"><img src="/logos/${item.operator}.svg" alt="${item.operator}" @error="${this.imageError}"></p>
+                            <a href="${item.vagonweb}">
+                                <span>${unsafeHTML(item.title)}</span>
+                                <img src="/logos/${item.operator}.svg" alt="${item.operator}" @error="${this.imageError}">
+                            </a>
                             <v-details path="${item.html}">${item.route}</v-details>
                         </li>`
                     )}
@@ -113,17 +115,21 @@ export default class App extends LitElement {
       li:last-of-type {
         border: none;
       }
-
-      .operator {
-        margin: 0;  
-      }
       
-      .operator img {
-        height: 1rem;
+      img {
+        padding: 2px;
+        height: 1.5rem;
         width: auto;
+        border-radius: 2px;
+        background: rgba(255,255,255, 0.5);
       }
 
       a {
+        display: flex;
+        justify-content: space-between;
+        gap: .5rem;
+        padding: 2px;
+        
         font-weight: 500;
         color: #646cff;
         text-decoration: inherit;
