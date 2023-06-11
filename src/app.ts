@@ -31,12 +31,20 @@ export default class App extends LitElement {
                     ${repeat(this.results, item => item.operator + item.nr, item => html`
                         <li>
                             <a href="${item.vagonweb}">${unsafeHTML(item.title)}</a>
+                            <p class="operator"><img src="/logos/${item.operator}.svg" alt="${item.operator}" @error="${this.imageError}"></p>
                             <v-details path="${item.html}">${item.route}</v-details>
                         </li>`
                     )}
                 </ul>
             </main>
         `
+    }
+
+    private imageError(event: Event)
+    {
+        const img = event.target as HTMLImageElement
+        img.parentElement.innerText = img.alt
+        img.remove()
     }
 
     reset() {
@@ -104,6 +112,15 @@ export default class App extends LitElement {
 
       li:last-of-type {
         border: none;
+      }
+
+      .operator {
+        margin: 0;  
+      }
+      
+      .operator img {
+        height: 1rem;
+        width: auto;
       }
 
       a {
