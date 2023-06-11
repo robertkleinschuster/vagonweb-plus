@@ -9,7 +9,7 @@ export default class Controller implements ReactiveController {
     }
 
     public async search(input: string) {
-        const url = new URL(`http://vagonweb.snappy.blue/search.php?q=${input}`);
+        const url = new URL(`https://vagonweb.snappy.blue/search.php?q=${input}`);
         const response = await fetch(url);
         return await response.json();
     }

@@ -20,7 +20,7 @@ class Details extends LitElement {
     private carriages: TemplateResult[] = []
 
     public async fetchData(path: string) {
-        const url = new URL(path, "http://vagonweb.snappy.blue")
+        const url = new URL(path, "https://vagonweb.snappy.blue")
         const response = await fetch(url)
         const htmlString = await response.text()
         const parser = new DOMParser()
