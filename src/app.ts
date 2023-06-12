@@ -4,6 +4,7 @@ import {repeat} from 'lit/directives/repeat.js'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js'
 import Controller from "./controller.ts";
 import "./details.ts"
+import {Train} from "./client/Client.ts";
 
 @customElement('v-app')
 export default class App extends LitElement {
@@ -13,7 +14,7 @@ export default class App extends LitElement {
     private searchInput: HTMLInputElement
 
     @state()
-    private results = []
+    private trains: Train[] = []
 
     render() {
         return html`
@@ -28,13 +29,18 @@ export default class App extends LitElement {
             </header>
             <main>
                 <ul>
-                    ${repeat(this.results, item => item.operator + item.nr, item => html`
+                    ${repeat(this.trains, train => train.operator + train.nr, train => html`
                         <li>
-                            <a href="${item.vagonweb}">
-                                <span>${unsafeHTML(item.title)}</span>
-                                <img src="/logos/${item.operator}.svg" alt="${item.operator}" @error="${this.imageError}">
+                            <a href="${train.web}">
+                                <span>${unsafeHTML(train.title)}</span>
+                                <span class="logos">
+                                    <img src="/logos/${train.operator}.svg" alt="${train.operator}"
+                                         @error="${this.imageError}">
+                                    <img src="/logos/${train.type.replace(':', '-')}.svg" alt="${train.type}"
+                                         @error="${this.trainTypeFallbackImage.bind(this, train.type)}">
+                                </span>
                             </a>
-                            <v-details path="${item.html}">${item.route}</v-details>
+                            <v-details operator="${train.operator}" nr="${train.nr}">${train.route}</v-details>
                         </li>`
                     )}
                 </ul>
@@ -42,11 +48,24 @@ export default class App extends LitElement {
         `
     }
 
-    private imageError(event: Event)
-    {
+    private imageError(event: Event) {
         const img = event.target as HTMLImageElement
-        img.parentElement.innerText = img.alt
-        img.remove()
+        if (img.src.endsWith('.svg')) {
+            img.src = img.src.replace('.svg', '.png')
+            return;
+        }
+        const replace = document.createElement('span')
+        replace.innerText = img.alt
+        img.replaceWith(replace)
+    }
+
+    private trainTypeFallbackImage(type: string, event: Event) {
+        const img = event.target as HTMLImageElement
+        if (type.includes(':') && img.src.includes(type.replace(':', '-'))) {
+            img.src = img.src.replace(type.replace(':', '-'), type.split(':').pop())
+        } else {
+            this.imageError(event)
+        }
     }
 
     reset() {
@@ -63,7 +82,7 @@ export default class App extends LitElement {
             this.searchInput.blur()
             return
         }
-        this.results = await this.controller.search(this.searchInput.value)
+        this.trains = await this.controller.search(this.searchInput.value)
     }
 
     static styles = css`
@@ -115,13 +134,24 @@ export default class App extends LitElement {
       li:last-of-type {
         border: none;
       }
-      
-      img {
+
+      .logos {
+        display: flex;
+        gap: .5rem;
         padding: 2px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      .logos img {
         height: 1.5rem;
         width: auto;
-        border-radius: 2px;
-        background: rgba(255,255,255, 0.5);
+      }
+
+      .logos span {
+        color: var(--color);
+        height: 1.5rem;
+        width: auto;
       }
 
       a {
@@ -129,7 +159,7 @@ export default class App extends LitElement {
         justify-content: space-between;
         gap: .5rem;
         padding: 2px;
-        
+
         font-weight: 500;
         color: #646cff;
         text-decoration: inherit;

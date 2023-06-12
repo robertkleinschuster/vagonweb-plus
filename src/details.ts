@@ -1,12 +1,15 @@
 import {css, html, LitElement, PropertyValues, TemplateResult} from "lit";
 import {customElement, property, state} from "lit/decorators.js";
-import {directTextContent} from "./utils.ts";
 import {unsafeHTML} from "lit/directives/unsafe-html.js";
+import {Client, TrainDetails} from "./client/Client.ts";
 
 @customElement('v-details')
 class Details extends LitElement {
     @property()
-    public path: string
+    public operator: string
+    @property()
+    public nr: string
+
 
     @state()
     private route: string = ''
@@ -14,56 +17,38 @@ class Details extends LitElement {
     private info: string = ''
 
     @state()
-    private badges: string[] = [];
+    private badges: TemplateResult[] = [];
 
     @state()
     private carriages: TemplateResult[] = []
 
-    public async fetchData(path: string) {
-        const url = new URL(path, "https://vagonweb.snappy.blue")
-        const response = await fetch(url)
-        const htmlString = await response.text()
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(htmlString, 'text/html')
+    @state()
+    private links: TemplateResult[] = [];
 
-        const route = directTextContent(doc.querySelector('.trasa'))
+    public async fetchData(operator: string, nr: string) {
+        const client = new Client()
+        const train = await client.train(operator, nr)
 
-        this.route = route.split(',').shift() + ' - ' + route.split(',').pop()
-        this.info = doc.querySelector('.omezeni_bord div')?.innerHTML ?? '';
-
-        if (!this.info) {
-            this.info = '<span class="info2j">i</span> täglich';
-        }
-
-        this.badges = []
-        doc.querySelectorAll('.pikto').forEach((img: HTMLImageElement) => {
-            if (!this.badges.includes(img.getAttribute('src'))) {
-                this.badges.push(img.getAttribute('src'))
-            }
-        });
-        this.badges.sort()
-
-        const firstPlanned = doc.querySelector('#planovane_razeni .vlacek')
-        this.carriages = []
-        if (firstPlanned) {
-            const imageNodes = firstPlanned.querySelectorAll('.vagonek img') as NodeListOf<HTMLImageElement>
-            for (const imgNode of imageNodes) {
-                imgNode.setAttribute('src', `https://www.vagonweb.cz/${imgNode.getAttribute('src')}`)
-                const targetHeight = imgNode.height * 0.8
-                const targetWidth = targetHeight * imgNode.width / imgNode.height
-                imgNode.height = targetHeight
-                imgNode.width = targetWidth
-                this.carriages.push(html`
-                    <span class="carriage" style="min-width: ${imgNode.width}px">${imgNode}</span>
-                `)
-            }
-        }
+        this.route = train.route ?? '';
+        this.info = train.info ?? '<span class="info2j">i</span> täglich';
+        this.badges = (train.badges ?? []).map(badge =>
+            html`<img src="${badge.src}" alt="${badge.title}" title="${badge.title}">`
+        );
+        this.carriages = (train.carriages ?? []).map(carriage =>
+            html`
+                <span class="carriage" style="min-width: ${carriage.width}px">
+                    <img src="${carriage.src}" width="${carriage.width}" height="${carriage.height}">
+                </span>
+            `)
+        this.links = (train.links ?? []).map(link =>
+            html`<a href="${link.href}">${link.name}</a>`
+        )
     }
 
     protected willUpdate(_changedProperties: PropertyValues) {
         super.willUpdate(_changedProperties);
-        if (_changedProperties.has('path')) {
-            this.fetchData(this.path)
+        if (_changedProperties.has('operator') || _changedProperties.has('nr')) {
+            this.fetchData(this.operator, this.nr)
         }
     }
 
@@ -71,16 +56,17 @@ class Details extends LitElement {
         return html`
             <p class="route">${this.route ? this.route : html`
                 <slot></slot>`}</p>
-            <p class="badges">${this.badges.map(src=> html`<img src="${src}" alt="">`)}</p>
+            <p class="badges">${this.badges}</p>
             <p class="info">${unsafeHTML(this.info)}</p>
             <p class="carriages">${this.carriages}</p>
+            <p class="links">${this.links}</p>
         `
     }
 
     static styles = css`
       :host {
         display: block;
-        height: 9rem;
+        height: 9.5rem;
       }
 
       .info1j, .info2j {
@@ -95,11 +81,11 @@ class Details extends LitElement {
       }
 
       .route, .info {
-        margin: .5rem 0;
+        margin: .25rem 0;
         overflow: auto;
         white-space: nowrap;
       }
-      
+
       .badges {
         display: flex;
         margin: .25rem 0;
@@ -115,7 +101,7 @@ class Details extends LitElement {
       }
 
       .carriages {
-        margin: .5rem 0;
+        margin: .25rem 0;
         display: flex;
         overflow-x: auto;
         overflow-y: hidden;
@@ -129,6 +115,13 @@ class Details extends LitElement {
       .carriage img {
         position: absolute;
         bottom: 0;
+      }
+      
+      .links {
+        margin: 0;
+        display: flex;
+        overflow: auto;
+        gap: .5rem;
       }
     `
 }
