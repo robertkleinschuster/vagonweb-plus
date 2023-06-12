@@ -33,9 +33,9 @@ class Train extends LitElement {
             const realtime = await this.controller.realtime(this.operator, this.type, this.nr)
             this.realtime = null !== realtime;
             if (realtime) {
-                console.log(realtime)
                 this.delay = realtime.delay / 60;
-                this.arrival = realtime.arrival;
+
+                this.arrival = (new Date(realtime.arrival)).toLocaleString();
             } else {
                 this.delay = 0;
                 this.arrival = null;
