@@ -28,13 +28,49 @@ export interface TrainDetails {
 }
 
 export class Client {
+    private controller = new AbortController();
+
     public async search(query: string): Promise<Train[]> {
-        const response = await fetch(`https://vagonweb-api.snappy.blue/v1/search/?q=${query}`)
+        const response = await fetch(`https://vagonweb-api.snappy.blue/v1/search/?q=${query}`, {signal: this.controller.signal})
         return await response.json();
     }
 
     public async train(operator: string, nr: string): Promise<TrainDetails> {
-        const response = await fetch(`https://vagonweb-api.snappy.blue/v1/train/?operator=${operator}&nr=${nr}`)
+        const response = await fetch(`https://vagonweb-api.snappy.blue/v1/train/?operator=${operator}&nr=${nr}`, {signal: this.controller.signal})
         return await response.json();
+    }
+
+    private async findHaFASTripId(operator: string, type: string, nr: string) {
+        if (['DB', 'OeBB'].includes(operator)) {
+            let hafasOperator = operator == 'DB' ? 'DB Fernverkehr AG' : 'Österreichische Bundesbahnen'
+            const response = await fetch(`https://v6.db.transport.rest/trips?query=${type + ' ' + nr}&operatorNames=${hafasOperator}&onlyCurrentlyRunning=true&stopovers=false&remarks=true&subStops=false&entrances=false&language=de`, {signal: this.controller.signal})
+            if (response.ok) {
+                const data = await response.json();
+                return data.trips[0]?.id;
+            }
+        }
+
+        return null;
+    }
+
+
+    public async realtime(operator: string, type: string, nr: string) {
+        const tripId = await this.findHaFASTripId(operator, type, nr);
+        if (tripId) {
+            const response = await fetch(`https://v6.db.transport.rest/trips/${tripId}?stopovers=false&remarks=true&polyline=false&language=de`, {signal: this.controller.signal});
+            const data = await response.json();
+            return {
+                delay: data.trip.arrivalDelay,
+                arrival: data.trip.arrival,
+                plannedArrival: data.trip.plannedArrival,
+                departure: data.trip.departure,
+                plannedDeparture: data.trip.plannedDeparture,
+            };
+        }
+        return null;
+    }
+
+    public abort() {
+        this.controller.abort()
     }
 }

@@ -4,6 +4,7 @@ import {repeat} from 'lit/directives/repeat.js'
 import {unsafeHTML} from 'lit/directives/unsafe-html.js'
 import Controller from "./controller.ts";
 import "./details.ts"
+import "./train.ts"
 import {Train} from "./client/Client.ts";
 
 @customElement('v-app')
@@ -31,41 +32,13 @@ export default class App extends LitElement {
                 <ul>
                     ${repeat(this.trains, train => train.operator + train.nr, train => html`
                         <li>
-                            <a href="${train.web}">
-                                <span>${unsafeHTML(train.title)}</span>
-                                <span class="logos">
-                                    <img src="/logos/${train.operator}.svg" alt="${train.operator}"
-                                         @error="${this.imageError}">
-                                    <img src="/logos/${train.type.replace(':', '-')}.svg" alt="${train.type}"
-                                         @error="${this.trainTypeFallbackImage.bind(this, train.type)}">
-                                </span>
-                            </a>
-                            <v-details operator="${train.operator}" nr="${train.nr}">${train.route}</v-details>
+                            <v-train title="${train.title}" type="${train.type}" operator="${train.operator}" nr="${train.nr}" web="${train.web}"></v-train>
+                            <v-details operator="${train.operator}" type="${train.type}" nr="${train.nr}">${train.route}</v-details>
                         </li>`
                     )}
                 </ul>
             </main>
         `
-    }
-
-    private imageError(event: Event) {
-        const img = event.target as HTMLImageElement
-        if (img.src.endsWith('.svg')) {
-            img.src = img.src.replace('.svg', '.png')
-            return;
-        }
-        const replace = document.createElement('span')
-        replace.innerText = img.alt
-        img.replaceWith(replace)
-    }
-
-    private trainTypeFallbackImage(type: string, event: Event) {
-        const img = event.target as HTMLImageElement
-        if (type.includes(':') && img.src.includes(type.replace(':', '-'))) {
-            img.src = img.src.replace(type.replace(':', '-'), type.split(':').pop())
-        } else {
-            this.imageError(event)
-        }
     }
 
     reset() {
@@ -133,25 +106,6 @@ export default class App extends LitElement {
 
       li:last-of-type {
         border: none;
-      }
-
-      .logos {
-        display: flex;
-        gap: .5rem;
-        padding: 2px;
-        border-radius: 2px;
-        background: rgba(255, 255, 255, 0.5);
-      }
-
-      .logos img {
-        height: 1.5rem;
-        width: auto;
-      }
-
-      .logos span {
-        color: var(--color);
-        height: 1.5rem;
-        width: auto;
       }
 
       a {
