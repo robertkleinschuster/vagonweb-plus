@@ -60,9 +60,9 @@ class Train extends LitElement {
             <a href="${this.web}">
                 <span>${unsafeHTML(this.title)} ${this.realtimeInfo()}</span>
                 <span class="logos">
-                    <img src="/logos/${this.operator}.svg" alt="${this.operator}"
+                    <img src="/operators/${this.operator}.svg" alt="${this.operator}"
                          @error="${this.imageError}">
-                    <img src="/logos/${this.type.replace(':', '-')}.svg" alt="${this.type}"
+                    <img src="/types/${this.type.replace(':', '-')}.svg" alt="${this.type}"
                          @error="${this.trainTypeFallbackImage.bind(this, this.type)}">
                 </span>
             </a>
