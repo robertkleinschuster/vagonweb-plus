@@ -41,14 +41,17 @@ export default class App extends LitElement {
         `
     }
 
-    reset() {
+    reset(e) {
+        e.preventDefault()
         this.searchInput.focus()
         this.searchInput.value = ''
+        this.searchInput.dispatchEvent(new Event('change'))
     }
 
     async search(event) {
         if ('' === this.searchInput.value.trim()) {
             this.searchInput.focus()
+            this.trains = [];
             return
         }
         if (event instanceof KeyboardEvent && event.code === 'Enter') {

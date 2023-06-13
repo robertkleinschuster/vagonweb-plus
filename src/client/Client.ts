@@ -60,11 +60,9 @@ export class Client {
             const response = await fetch(`https://v6.db.transport.rest/trips/${tripId}?stopovers=false&remarks=true&polyline=false&language=de`, {signal: this.controller.signal});
             const data = await response.json();
             return {
-                delay: data.trip.arrivalDelay,
-                arrival: data.trip.arrival,
-                plannedArrival: data.trip.plannedArrival,
-                departure: data.trip.departure,
-                plannedDeparture: data.trip.plannedDeparture,
+                delay: data.trip.arrivalDelay / 60,
+                arrival: new Date(data.trip.arrival ?? data.trip.plannedArrival),
+                departure: new Date(data.trip.departure ?? data.trip.plannedDeparture),
             };
         }
         return null;
@@ -72,5 +70,6 @@ export class Client {
 
     public abort() {
         this.controller.abort()
+        this.controller = new AbortController()
     }
 }

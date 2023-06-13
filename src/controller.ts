@@ -10,6 +10,7 @@ export default class Controller implements ReactiveController {
     }
 
     public async search(input: string): Promise<Train[]> {
+        this.client.abort()
         return await this.client.search(input)
     }
 
