@@ -145,6 +145,7 @@ class Details extends LitElement {
         display: flex;
         overflow: auto;
         gap: .5rem;
+        white-space: nowrap;
       }
     `
 }
