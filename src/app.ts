@@ -70,8 +70,18 @@ export default class App extends LitElement {
         flex-direction: column;
       }
 
+      h1 {
+        color: hsl(5, 84%, 40%);
+        font-size: 1.5rem;
+        background: white;
+        border: 4px solid hsl(5, 84%, 40%);
+        border-radius: 5px;
+        padding: .25rem .5rem;
+        align-self: flex-start;
+      }
+
       header {
-        background: #3b3b3b;
+        border-bottom: 2px solid #D9D9D6;
         top: 0;
         display: flex;
         flex-direction: column;
@@ -118,12 +128,11 @@ export default class App extends LitElement {
         padding: 2px;
 
         font-weight: 500;
-        color: #646cff;
-        text-decoration: inherit;
+        color: inherit;
       }
 
       a:hover {
-        color: #535bf2;
+        color: inherit;
       }
 
       button {
@@ -155,20 +164,6 @@ export default class App extends LitElement {
 
       .search input {
         flex-grow: 1;
-      }
-
-      @media (prefers-color-scheme: light) {
-        a:hover {
-          color: #747bff;
-        }
-
-        button {
-          background-color: #f9f9f9;
-        }
-
-        header {
-          background: #e3e3e3;
-        }
       }
     `
 }

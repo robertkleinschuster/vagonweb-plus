@@ -1,4 +1,4 @@
-import {css, html, LitElement, PropertyValues, TemplateResult} from "lit";
+import {css, html, LitElement, nothing, PropertyValues, TemplateResult} from "lit";
 import {customElement, property, state} from "lit/decorators.js";
 import {unsafeHTML} from "lit/directives/unsafe-html.js";
 import Controller from "./controller.ts";
@@ -22,6 +22,9 @@ class Details extends LitElement {
     private info: string = ''
 
     @state()
+    private infoWarning = false;
+
+    @state()
     private badges: TemplateResult[] = [];
 
     @state()
@@ -34,6 +37,7 @@ class Details extends LitElement {
         const train = await this.controller.train(operator, nr)
 
         this.route = train.route ?? '';
+        this.infoWarning = !!train.info;
         this.info = train.info ?? '<span class="info2j">i</span> täglich';
         this.badges = (train.badges ?? []).map(badge =>
             html`
@@ -65,7 +69,7 @@ class Details extends LitElement {
             <p class="route">${this.route ? this.route : html`
                 <slot></slot>`}</p>
             <p class="badges">${this.badges}</p>
-            <p class="info">${unsafeHTML(this.info)}</p>
+            <p class="${this.infoWarning ? 'info warning' : 'info'}">${unsafeHTML(this.info)}</p>
             <p class="carriages">${this.carriages}</p>
             <p class="links">${this.links}</p>
         `
@@ -94,6 +98,13 @@ class Details extends LitElement {
         white-space: nowrap;
       }
 
+      .warning:not(:empty) {
+        padding: 3px;
+        background: hsl(40, 100%, 49%);
+        font-weight: bolder;
+        color: black;
+      }
+
       .badges {
         display: flex;
         margin: .25rem 0;
@@ -116,13 +127,8 @@ class Details extends LitElement {
         height: 1rem;
         width: auto;
       }
-
-      .info:not(:empty) {
-        border: var(--light-border);
-        padding: 1px 2px;
-        border-radius: 4px;
-      }
-
+      
+    
       .carriages {
         margin: .25rem 0;
         display: flex;

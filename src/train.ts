@@ -76,7 +76,7 @@ class Train extends LitElement {
                 <span class="logos">
                     <img src="/operators/${this.operator}.svg" alt="${this.operator}"
                          @error="${this.imageError}">
-                    <img src="/types/${this.type.replace(':', '-')}.svg" alt="${this.type}"
+                    <img src="/types/${this.type.replace(':', '-')}.svg" alt="${this.type.split(':').pop()}"
                          @error="${this.trainTypeFallbackImage.bind(this, this.type)}">
                 </span>
             </a>
@@ -98,9 +98,9 @@ class Train extends LitElement {
       .logos {
         display: flex;
         gap: .5rem;
-        padding: 2px;
+        padding: 4px;
         border-radius: 2px;
-        background: rgba(255, 255, 255, 0.5);
+        background: #fff;
       }
 
       .logos img {
@@ -109,8 +109,13 @@ class Train extends LitElement {
       }
 
       .logos span {
-        color: var(--color);
+        color: black;
+        font-weight: bold;
+        font-style: italic;
+        font-size: 1.5rem;
+        padding: 0 .25rem;
         height: 1.5rem;
+        line-height: 1;
         width: auto;
       }
 
@@ -119,23 +124,15 @@ class Train extends LitElement {
         justify-content: space-between;
         gap: .5rem;
         padding: 2px;
+        font-size: 1.25rem;
 
         font-weight: 500;
-        color: #646cff;
-        text-decoration: inherit;
+        color: inherit;
+        text-decoration: none;
       }
 
       a:hover {
-        color: #535bf2;
-      }
-
-
-      @media (prefers-color-scheme: light) {
-        a:hover {
-          color: #747bff;
-        }
-
-
+        color: inherit;
       }
     `
 
