@@ -24,7 +24,11 @@ class Train extends LitElement {
     @state()
     private realtime = false;
 
-    private arrival = null;
+    @state()
+    private arrival = null
+
+    @state()
+    private destination = null
 
     protected async willUpdate(_changedProperties: PropertyValues) {
         super.willUpdate(_changedProperties);
@@ -35,9 +39,11 @@ class Train extends LitElement {
             if (realtime) {
                 this.delay = realtime.delay;
                 this.arrival = realtime.arrival.toLocaleString();
+                this.destination = realtime.destination;
             } else {
                 this.delay = 0;
                 this.arrival = null;
+                this.destination = null;
             }
         }
     }
@@ -46,19 +52,27 @@ class Train extends LitElement {
         if (this.realtime) {
             const result = []
             if (this.delay) {
-                result.push(html`<span class="delay">Ank.: ${this.arrival} (+${this.delay} min)</span>`)
+                result.push(html`<span class="delay">${this.destination}: ${this.arrival}</span>`)
             } else {
-                result.push(html`<span class="arrival">Ank.: ${this.arrival}</span>`)
+                result.push(html`<span class="arrival">${this.destination}: ${this.arrival}</span>`)
             }
             return result;
         }
         return '';
     }
 
+    private realtimeDelayInfo()
+    {
+        if (this.realtime && this.delay) {
+            return html`<span class="delay"> (+${this.delay} min)</span>`
+        }
+        return nothing;
+    }
+
     protected render() {
         return html`
             <a href="${this.web}">
-                <span>${unsafeHTML(this.title)} ${this.realtimeInfo()}</span>
+                <span>${unsafeHTML(this.title)}${this.realtimeDelayInfo()}</span>
                 <span class="logos">
                     <img src="/operators/${this.operator}.svg" alt="${this.operator}"
                          @error="${this.imageError}">
@@ -66,6 +80,7 @@ class Train extends LitElement {
                          @error="${this.trainTypeFallbackImage.bind(this, this.type)}">
                 </span>
             </a>
+            <div>${this.realtimeInfo()}</div>
         `;
     }
 

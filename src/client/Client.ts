@@ -63,6 +63,7 @@ export class Client {
                 delay: data.trip.arrivalDelay / 60,
                 arrival: new Date(data.trip.arrival ?? data.trip.plannedArrival),
                 departure: new Date(data.trip.departure ?? data.trip.plannedDeparture),
+                destination: data.trip.destination.name
             };
         }
         return null;
