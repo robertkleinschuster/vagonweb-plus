@@ -80,6 +80,10 @@ class Details extends LitElement {
         display: block;
         height: 9.5rem;
       }
+      
+      a {
+        color: inherit;
+      }
 
       .info1j, .info2j {
         background: red;

@@ -97,6 +97,7 @@ class Train extends LitElement {
 
       .logos {
         display: flex;
+        flex-wrap: wrap;
         gap: .5rem;
         padding: 4px;
         border-radius: 2px;
@@ -121,6 +122,7 @@ class Train extends LitElement {
 
       a {
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
         gap: .5rem;
         padding: 2px;
