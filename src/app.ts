@@ -1,7 +1,6 @@
 import {LitElement, css, html, nothing, PropertyValues} from 'lit'
 import {customElement, query, state} from 'lit/decorators.js'
 import {repeat} from 'lit/directives/repeat.js'
-import {unsafeHTML} from 'lit/directives/unsafe-html.js'
 import Controller from "./controller.ts";
 import "./details.ts"
 import "./train.ts"
@@ -62,6 +61,10 @@ export default class App extends LitElement {
     }
 
     static styles = css`
+      *, *:before, *:after {
+        box-sizing: border-box;
+      }
+      
       :host {
         width: 100%;
         height: 100%;

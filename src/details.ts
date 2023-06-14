@@ -66,19 +66,22 @@ class Details extends LitElement {
 
     protected render() {
         return html`
-            <p class="route">${this.route ? this.route : html`
-                <slot></slot>`}</p>
-            <p class="badges">${this.badges}</p>
-            <p class="${this.infoWarning ? 'info warning' : 'info'}">${unsafeHTML(this.info)}</p>
-            <p class="carriages">${this.carriages}</p>
+            <div class="${this.infoWarning ? 'info warning' : 'info'}">${unsafeHTML(this.info)}</div>
+            <p class="route">${this.route ? this.route : html`<slot></slot>`}</p>
             <p class="links">${this.links}</p>
+            <p class="badges">${this.badges}</p>
+            <p class="carriages">${this.carriages}</p>
         `
     }
 
     static styles = css`
+      *, *:before, *:after {
+        box-sizing: border-box;
+      }
+      
       :host {
         display: block;
-        height: 9.5rem;
+        height: 10rem;
       }
       
       a {
@@ -108,12 +111,24 @@ class Details extends LitElement {
         font-weight: bolder;
         color: black;
       }
+      
+      .info div {
+        display: inline-block;
+      }
+
+      .info div:not(:last-of-type) {
+        margin-right: .25rem;  
+      }
+      
+      .info div:not(:last-of-type):after {
+        content: ' ...';
+      }
 
       .badges {
         display: flex;
         margin: .25rem 0;
         gap: .25rem;
-        height: 1rem;
+        height: 1.5rem;
         overflow: auto;
       }
 
@@ -121,10 +136,12 @@ class Details extends LitElement {
         display: flex;
         overflow: hidden;
         justify-content: center;
+        align-items: center;
         border-radius: 4px;
-        height: 1rem;
-        width: 1rem;
+        height: 1.5rem;
+        width: 1.5rem;
         background: #0204c7;
+        border: 1px solid white;
       }
 
       .badge img {

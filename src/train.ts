@@ -30,6 +30,12 @@ class Train extends LitElement {
     @state()
     private destination = null
 
+    @state()
+    private platform = null
+
+    @state()
+    private remarks = [];
+
     protected async willUpdate(_changedProperties: PropertyValues) {
         super.willUpdate(_changedProperties);
 
@@ -40,10 +46,14 @@ class Train extends LitElement {
                 this.delay = realtime.delay;
                 this.arrival = realtime.arrival.toLocaleString();
                 this.destination = realtime.destination;
+                this.remarks = realtime.remarks;
+                this.platform = realtime.arrivalPlatform;
             } else {
                 this.delay = 0;
                 this.arrival = null;
                 this.destination = null;
+                this.platform = null;
+                this.remarks = []
             }
         }
     }
@@ -51,18 +61,21 @@ class Train extends LitElement {
     private realtimeInfo() {
         if (this.realtime) {
             const result = []
-            if (this.delay) {
-                result.push(html`<span class="delay">${this.destination}: ${this.arrival}</span>`)
-            } else {
-                result.push(html`<span class="arrival">${this.destination}: ${this.arrival}</span>`)
-            }
+            result.push(html`
+                <div>Echtzeitdaten (DB Navigator):</div>`)
+            result.push(html`<span
+                    class="${this.delay ? 'delay' : 'arrival'}">${this.destination}${this.platform ? html` (${this.platform})` : nothing}
+                : ${this.arrival}</span>`)
+            result.push(html`<p class="remarks">${this.remarks.map(remark => html`
+                <span class="${remark.type}">${remark.text}</span>
+            `)}</p>`)
+
             return result;
         }
-        return '';
+        return html`Echtzeitdaten nicht verfügbar.`;
     }
 
-    private realtimeDelayInfo()
-    {
+    private realtimeDelayInfo() {
         if (this.realtime && this.delay) {
             return html`<span class="delay"> (+${this.delay} min)</span>`
         }
@@ -80,16 +93,56 @@ class Train extends LitElement {
                          @error="${this.trainTypeFallbackImage.bind(this, this.type)}">
                 </span>
             </a>
-            <div>${this.realtimeInfo()}</div>
+            <div class="${this.realtime ? 'realtime' : 'realtime unavailable'}">${this.realtimeInfo()}</div>
         `;
     }
 
     static styles = css`
+      *, *:before, *:after {
+        box-sizing: border-box;
+      }
+
+      .realtime {
+        padding: 2px;
+        margin: .5rem 0;
+        border: 1px solid;
+      }
+
+      .realtime.unavailable {
+        color: grey;
+        border-color: grey;
+      }
+
+      .remarks {
+        display: flex;
+        margin: 0;
+        gap: .5rem;
+        white-space: nowrap;
+        overflow: auto;
+      }
+
+      .remarks > * {
+        display: flex;
+        gap: .25rem;
+        align-items: center;
+      }
+
+      .remarks > *:before {
+        content: "i";
+        font-size: 10px;
+        font-weight: bolder;
+        text-align: center;
+        height: 1rem;
+        width: 1rem;
+        border-radius: 10px;
+        border: 1px solid;
+      }
+
       .delay {
         color: red;
         font-weight: bold;
       }
-      
+
       .arrival {
         color: green;
         font-weight: bold;
@@ -107,6 +160,7 @@ class Train extends LitElement {
       .logos img {
         height: 1.5rem;
         width: auto;
+        max-width: 10rem;
       }
 
       .logos span {
