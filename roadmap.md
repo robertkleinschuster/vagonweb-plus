@@ -1,1 +1,11 @@
 - use hafas as primary data source
+- Link vagonWEB+ header to „wagenreihungen 2023“
+- add links to de departurescreens from kevkev.at
+- grab elvira realtimedata
+- grab oebb live beta data
+- change D logo for ÖBB Rapidtrains
+- change R/REX logo for ÖBB Localtrains
+- grab EIC and EIP logos as svg from vagonweb poland
+- create a svg with RGJ for Regiojet
+- Use MÁV‘s [S??] for SBahn lines
+- overthink a new project name
